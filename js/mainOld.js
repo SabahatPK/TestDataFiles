@@ -1,4 +1,6 @@
-let cleanData = [];
+//-----------------Initialize static bits---------------
+let data = [];
+
 let sliderBeginDate = new Date("1/1/2017");
 let sliderEndDate = new Date("12/31/2018");
 
@@ -52,12 +54,6 @@ g.append("text")
   .attr("transform", "rotate(-90)")
   .text("Agents");
 
-var t = function() {
-  return d3.transition().duration(1000);
-};
-
-let formatDisplayDate = d3.timeFormat("%B %d, %Y");
-
 // Add jQuery UI slider
 let sliderScale = d3
   .scaleTime()
@@ -70,23 +66,20 @@ let threeMonthInterval =
 $("#date-slider").slider({
   max: 100,
   min: 0,
-  step: threeMonthInterval,
+  step: threeMonthInterval, //Is this actually working...??
   range: true,
   values: [0, 100],
   slide: function(event, ui) {
-    sliderBeginDate = sliderScale.invert(ui.values[0]);
-    sliderEndDate = sliderScale.invert(ui.values[1]);
-    $("#dateLabel1").text(formatDisplayDate(sliderBeginDate));
-    $("#dateLabel2").text(formatDisplayDate(sliderEndDate));
-    updateBarChart();
+    // sliderBeginDate = sliderScale.invert(ui.values[0]);
+    // sliderEndDate = sliderScale.invert(ui.values[1]);
+    newData();
   }
 });
 
-d3.csv("data/Book2.csv").then(function(data) {
-  cleanData = data;
+//-----------------BEGIN: DATA LOAD------------------------------
 
-  // Prepare and clean data
-  cleanData.forEach(function(d) {
+d3.csv("data/Book2.csv").then(function(data) {
+  data.forEach(function(d) {
     //Update all values to be numbers/dates instead of string
     for (let property in d) {
       if (d.hasOwnProperty(property) && property !== "Year") {
@@ -97,26 +90,38 @@ d3.csv("data/Book2.csv").then(function(data) {
     }
   });
 
-  // Run the visualization for the first time
-  updateBarChart();
+  //Init viz:
+  updateBarChart(data);
 });
 
-function updateBarChart() {
-  let timeCleanData = cleanData.filter(function(d) {
-    return d.Year >= sliderBeginDate && d.Year <= sliderEndDate;
-  });
+//-----------------END: DATA LOAD-----------------------------
 
-  var series = d3
+function newData() {
+  let sliderValues = $("#date-slider").slider("values");
+  console.log(sliderValues);
+  let timeCleanData = data.filter(function(d) {
+    return d.Year >= sliderValues[0] && d.Year <= sliderValues[1];
+  });
+  console.log(timeCleanData);
+}
+
+function updateBarChart(someData) {
+  // //Start here:
+  // //review code in main.js of 6.10.1 to see how it was set up there.
+  // //Then make sure data viz updates as slider updates.
+
+  //Feed data into stack() method
+  var stack = d3
     .stack()
-    .keys(["Number of Active BB Agents", "Number of Agents"])(timeCleanData);
-  
+    .keys(["Number of Active BB Agents", "Number of Agents"]);
+  var series = stack(someData);
 
   //x-scale:
-  let xScaleValues = timeCleanData.map(each => each.Year);
+  let xScaleValues = someData.map(each => each.Year);
   xScale.domain(d3.extent(xScaleValues));
 
   // y-scale:
-  let yScaleValues = timeCleanData.map(
+  let yScaleValues = someData.map(
     each => each["Number of Agents"] + each["Number of Active BB Agents"]
   );
   yScale.domain([0, d3.max(yScaleValues)]);
@@ -141,8 +146,7 @@ function updateBarChart() {
   colorBand.exit().remove();
 
   //update
-  //outs qn - should I keep classed() in update()
-  //ans: seemed to be OK without it
+  //outs qn - should I keep classed()
   colorBand.classed("layer", true).attr("fill", function(d) {
     return z(d.key);
   });
