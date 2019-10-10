@@ -5,7 +5,7 @@
 }
 
 #logo {
-  height:50px;
+  height: 50px;
 }
 
 .navbar-brand {
@@ -20,13 +20,14 @@
 .axis path,
 .axis line {
   fill: none;
-  stroke: #D4D8DA;
+  stroke: #d4d8da;
   stroke-width: 2px;
   shape-rendering: crispEdges;
 }
 
 .line {
   fill: none;
+  stroke: steelblue;
   stroke-width: 2px;
 }
 
@@ -36,15 +37,15 @@
 }
 
 .focus circle {
-  fill: #F1F3F3;
+  fill: #f1f3f3;
   stroke: #777;
   stroke-width: 3px;
 }
-  
+
 .hover-line {
   stroke: #777;
   stroke-width: 2px;
-  stroke-dasharray: 3,3;
+  stroke-dasharray: 3, 3;
 }
 
 #selections .col-md-4 {

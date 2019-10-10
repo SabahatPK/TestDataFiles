@@ -1,8 +1,15 @@
+//outs qn: why is line BEHIND bars?
+//Possible solution: https://stackoverflow.com/questions/50028793/how-i-can-move-the-gridline-behind-the-bar-chart-d3
 let cleanData = [];
-let sliderBeginDate = new Date("1/1/2017");
+let sliderBeginDate = new Date("12/1/2015");
 let sliderEndDate = new Date("12/31/2018");
 
-let margin = { left: 80, right: 20, top: 50, bottom: 100 };
+let formatDisplayDate = d3.timeFormat("%B %d, %Y");
+
+$("#dateLabel1").text(formatDisplayDate(sliderBeginDate));
+$("#dateLabel2").text(formatDisplayDate(sliderEndDate));
+
+let margin = { left: 80, right: 40, top: 50, bottom: 100 };
 
 let width = 600 - margin.left - margin.right,
   height = 400 - margin.top - margin.bottom;
@@ -15,11 +22,19 @@ let g = d3
   .append("g")
   .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
+// Add the line for the first time
+g.append("path")
+  .attr("class", "line")
+  .attr("fill", "none")
+  .attr("stroke", "grey")
+  .attr("stroke-width", "3px");
+
 //x-scale:
 let xScale = d3.scaleTime().range([0, width]);
 
 //y-scale:
-let yScale = d3.scaleLinear().range([height, 0]);
+let yScale0 = d3.scaleLinear().range([height, 0]);
+let yScale1 = d3.scaleLinear().range([height, 0]);
 
 //color-band scale:
 var z = d3.scaleOrdinal().range(["#98abc5", "#8a89a6"]);
@@ -32,8 +47,15 @@ let xAxisCall = g
   .attr("transform", "translate(0," + height + ")");
 
 // Y Axis
-var yAxis = d3.axisLeft(yScale);
+var yAxis = d3.axisLeft(yScale0);
 let yAxisCall = g.append("g").attr("class", "y axis");
+
+//Other y-axis:
+let y1Axis = d3.axisRight(yScale1);
+let y1AxisCall = g
+  .append("g")
+  .attr("class", "axisRed")
+  .attr("transform", "translate( " + width + ", 0 )");
 
 // X Label
 g.append("text")
@@ -56,12 +78,10 @@ var t = function() {
   return d3.transition().duration(1000);
 };
 
-let formatDisplayDate = d3.timeFormat("%B %d, %Y");
-
 // Add jQuery UI slider
 let sliderScale = d3
   .scaleTime()
-  .domain([new Date("1/1/2017"), new Date("12/31/2018")])
+  .domain([new Date("1/1/2015"), new Date("12/31/2018")])
   .range([0, 100]);
 
 let threeMonthInterval =
@@ -82,8 +102,11 @@ $("#date-slider").slider({
   }
 });
 
+//---------------BEGIN DATA LOAD-----------------
+
 d3.csv("data/Book2.csv").then(function(data) {
   cleanData = data;
+  console.log(cleanData);
 
   // Prepare and clean data
   cleanData.forEach(function(d) {
@@ -101,38 +124,66 @@ d3.csv("data/Book2.csv").then(function(data) {
   updateBarChart();
 });
 
+//---------------END DATA LOAD-----------------
+
 function updateBarChart() {
   let timeCleanData = cleanData.filter(function(d) {
     return d.Year >= sliderBeginDate && d.Year <= sliderEndDate;
   });
 
+  //Format data for stacked bar-chart:
   var series = d3
     .stack()
     .keys(["Number of Active BB Agents", "Number of Agents"])(timeCleanData);
-  
 
   //x-scale:
   let xScaleValues = timeCleanData.map(each => each.Year);
-  xScale.domain(d3.extent(xScaleValues));
+  xScale.domain(
+    d3.extent(xScaleValues, function(d) {
+      return d;
+    })
+  );
+  //outs qn - will this fix bar overflow? https://stackoverflow.com/questions/39903065/d3-bar-chart-overflow
 
   // y-scale:
   let yScaleValues = timeCleanData.map(
     each => each["Number of Agents"] + each["Number of Active BB Agents"]
   );
-  yScale.domain([0, d3.max(yScaleValues)]);
+  yScale0.domain([0, d3.max(yScaleValues)]);
+
+  yScale1.domain([
+    0,
+    d3.max(timeCleanData, d => d["Average number of transaction per day"])
+  ]);
 
   //color-band scale:
   z.domain(["Number of Active BB Agents", "Number of Agents"]);
 
   //x-axis:
-  let xAxis = d3.axisBottom(xScale);
+  let xAxis = d3.axisBottom(xScale); //Do I need to delete this since it's above already?
   xAxisCall.call(xAxis);
 
   // Y Axis
-  var yAxis = d3.axisLeft(yScale);
+  var yAxis = d3.axisLeft(yScale0); //Do I need to delete this since it's above already?
   yAxisCall.call(yAxis);
 
-  // Bars
+  //Other y-axis:
+  y1AxisCall.call(y1Axis);
+
+  // Line - path generator:
+  let valueline = d3
+    .line()
+    .x(function(d) {
+      return xScale(d.Year);
+    })
+    .y(function(d) {
+      return yScale1(d["Average number of transaction per day"]);
+    });
+
+  // Update our line path
+  g.select(".line").attr("d", valueline(timeCleanData));
+
+  // Bars-colorband:
   //outs qn - why are bars going out of bounds of x-scale...??
   //data join
   let colorBand = g.selectAll("g.layer").data(series);
@@ -156,6 +207,7 @@ function updateBarChart() {
       return z(d.key);
     });
 
+  //Bars - actual bars:
   //data join:
   let bars = g
     .selectAll("g.layer") //outs qn - is this the line that is tying series to data()
@@ -173,10 +225,10 @@ function updateBarChart() {
       return xScale(d.data.Year);
     })
     .attr("y", function(d) {
-      return yScale(d[1]);
+      return yScale0(d[1]);
     })
     .attr("height", function(d) {
-      return yScale(d[0]) - yScale(d[1]);
+      return yScale0(d[0]) - yScale0(d[1]);
     })
     .attr("width", 25);
 
@@ -188,10 +240,10 @@ function updateBarChart() {
       return xScale(d.data.Year);
     })
     .attr("y", function(d) {
-      return yScale(d[1]);
+      return yScale0(d[1]);
     })
     .attr("height", function(d) {
-      return yScale(d[0]) - yScale(d[1]);
+      return yScale0(d[0]) - yScale0(d[1]);
     })
     .attr("width", 25);
 }

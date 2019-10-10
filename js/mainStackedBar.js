@@ -1,8 +1,11 @@
-//-----------------Initialize static bits---------------
-let data = [];
-
-let sliderBeginDate = new Date("1/1/2017");
+let cleanData = [];
+let sliderBeginDate = new Date("12/1/2015");
 let sliderEndDate = new Date("12/31/2018");
+
+let formatDisplayDate = d3.timeFormat("%B %d, %Y");
+
+$("#dateLabel1").text(formatDisplayDate(sliderBeginDate));
+$("#dateLabel2").text(formatDisplayDate(sliderEndDate));
 
 let margin = { left: 80, right: 20, top: 50, bottom: 100 };
 
@@ -54,10 +57,14 @@ g.append("text")
   .attr("transform", "rotate(-90)")
   .text("Agents");
 
+var t = function() {
+  return d3.transition().duration(1000);
+};
+
 // Add jQuery UI slider
 let sliderScale = d3
   .scaleTime()
-  .domain([new Date("1/1/2017"), new Date("12/31/2018")])
+  .domain([new Date("1/1/2015"), new Date("12/31/2018")])
   .range([0, 100]);
 
 let threeMonthInterval =
@@ -66,20 +73,26 @@ let threeMonthInterval =
 $("#date-slider").slider({
   max: 100,
   min: 0,
-  step: threeMonthInterval, //Is this actually working...??
+  step: threeMonthInterval,
   range: true,
   values: [0, 100],
   slide: function(event, ui) {
-    // sliderBeginDate = sliderScale.invert(ui.values[0]);
-    // sliderEndDate = sliderScale.invert(ui.values[1]);
-    newData();
+    sliderBeginDate = sliderScale.invert(ui.values[0]);
+    sliderEndDate = sliderScale.invert(ui.values[1]);
+    $("#dateLabel1").text(formatDisplayDate(sliderBeginDate));
+    $("#dateLabel2").text(formatDisplayDate(sliderEndDate));
+    updateBarChart();
   }
 });
 
-//-----------------BEGIN: DATA LOAD------------------------------
+//---------------BEGIN DATA LOAD-----------------
 
 d3.csv("data/Book2.csv").then(function(data) {
-  data.forEach(function(d) {
+  cleanData = data;
+  console.log(cleanData);
+
+  // Prepare and clean data
+  cleanData.forEach(function(d) {
     //Update all values to be numbers/dates instead of string
     for (let property in d) {
       if (d.hasOwnProperty(property) && property !== "Year") {
@@ -90,38 +103,33 @@ d3.csv("data/Book2.csv").then(function(data) {
     }
   });
 
-  //Init viz:
-  updateBarChart(data);
+  // Run the visualization for the first time
+  updateBarChart();
 });
 
-//-----------------END: DATA LOAD-----------------------------
+//---------------END DATA LOAD-----------------
 
-function newData() {
-  let sliderValues = $("#date-slider").slider("values");
-  console.log(sliderValues);
-  let timeCleanData = data.filter(function(d) {
-    return d.Year >= sliderValues[0] && d.Year <= sliderValues[1];
+function updateBarChart() {
+  let timeCleanData = cleanData.filter(function(d) {
+    return d.Year >= sliderBeginDate && d.Year <= sliderEndDate;
   });
-  console.log(timeCleanData);
-}
 
-function updateBarChart(someData) {
-  // //Start here:
-  // //review code in main.js of 6.10.1 to see how it was set up there.
-  // //Then make sure data viz updates as slider updates.
-
-  //Feed data into stack() method
-  var stack = d3
+  var series = d3
     .stack()
-    .keys(["Number of Active BB Agents", "Number of Agents"]);
-  var series = stack(someData);
+    .keys(["Number of Active BB Agents", "Number of Agents"])(timeCleanData);
 
   //x-scale:
-  let xScaleValues = someData.map(each => each.Year);
-  xScale.domain(d3.extent(xScaleValues));
+  let xScaleValues = timeCleanData.map(each => each.Year);
+  xScale.domain(
+    d3.extent(xScaleValues, function(d) {
+      return d;
+    })
+  );
+  // xScale.domain(d3.extent(xScaleValues));
+  //outs qn - will this fix bar overflow? https://stackoverflow.com/questions/39903065/d3-bar-chart-overflow
 
   // y-scale:
-  let yScaleValues = someData.map(
+  let yScaleValues = timeCleanData.map(
     each => each["Number of Agents"] + each["Number of Active BB Agents"]
   );
   yScale.domain([0, d3.max(yScaleValues)]);
@@ -146,7 +154,8 @@ function updateBarChart(someData) {
   colorBand.exit().remove();
 
   //update
-  //outs qn - should I keep classed()
+  //outs qn - should I keep classed() in update()
+  //ans: seemed to be OK without it
   colorBand.classed("layer", true).attr("fill", function(d) {
     return z(d.key);
   });
