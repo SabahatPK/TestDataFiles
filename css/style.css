@@ -52,3 +52,31 @@
   padding-top: 10px;
   padding-bottom: 10px;
 }
+
+.chart-area-all {
+  /* border: 1px solid blueviolet; */
+}
+
+.allGenderGraphs {
+  position: relative;
+}
+
+#pkMap {
+  /* border: 5px solid #ccc; */
+  position: absolute;
+  right: 355px;
+  top: 300px;
+  z-index: -1;
+}
+
+/* OUTS - slide no longer works after scrolling down  */
+#selections {
+  position: sticky;
+  top: 0;
+  background-color: #b2df8a;
+}
+
+#dateLabel1,
+#dateLabel2 {
+  color: white;
+}
