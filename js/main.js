@@ -117,16 +117,16 @@ Promise.all(promises).then(function(allData) {
   let keys2 = ["Female", "Male"];
 
   let smallDimensions = {
-    height: 300,
-    width: 250,
-    marginLeft: 40,
+    height: 250,
+    width: 200,
+    marginLeft: 55,
     marginRight: 20,
     marginTop: 25,
     marginBottom: 50
   };
   let largeDimensions = {
-    height: 600,
-    width: 500,
+    height: 450,
+    width: 400,
     marginLeft: 80,
     marginRight: 40,
     marginTop: 50,
@@ -200,3 +200,6 @@ function updateCharts() {
   stackAreaChart7.wrangleData(sliderBegDate, sliderEndDate);
   stackAreaChart8.wrangleData(sliderBegDate, sliderEndDate);
 }
+
+//outs - asked Udemy about possible refactoring of code:
+//https://www.udemy.com/course/masteringd3js/learn/lecture/9441358#questions/8522398

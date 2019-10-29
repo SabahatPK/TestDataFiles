@@ -26,6 +26,10 @@ MapChart.prototype.initVis = function() {
     .append("svg")
     .attr("width", vis.width)
     .attr("height", vis.height);
+  //outs - how to make each province "clickable"?
+  // .on("click", function() {
+  //   console.log("I clicked on a map");
+  // });
 
   vis.svg
     .append("path")
