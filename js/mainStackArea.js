@@ -59,7 +59,7 @@ StackedArea.prototype.initVis = function() {
     vis.title = vis.allData[0]["Province"];
   }
 
-  //outs - graphs need to always shopw which year they are depicting; point out somewhere on x-axis; come back to this after fixing slider lag
+  //outs - graphs need to always shopw which year they are depicting; point out somewhere on x-axis;
   vis.g = vis.svg
     .append("text")
     .attr("x", vis.dimensions.width / 2)
