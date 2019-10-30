@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="description" content="" />
-    <title>PK Big Fat Data Dashboards</title>
+    <title>PK Financial Inclusion Data Dashboard</title>
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <!-- jQuery UI CSS -->
@@ -17,9 +17,22 @@
   <body>
     <nav class="navbar navbar-default">
       <div class="container">
-        <a class="navbar-brand" href="#"><img id="logo" src="img/logo.png"/></a>
+        <a class="navbar-brand" href="#"
+          ><img id="logo" src="img/noun_Pakistan_777656_v1.png" />Financial
+          Inclusion Data Dashboard</a
+        >
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#Footnote1">About This Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#Footnote2">About Me</a>
+          </li>
+        </ul>
       </div>
     </nav>
+
+    <!-- OUTS - Add attribution for Pakistan flag logo -->
 
     <!-- Bootstrap grid setup -->
     <div class="container">
@@ -34,7 +47,7 @@
       </div>
 
       <!-- OUTS - https://stackoverflow.com/questions/58612134/how-to-make-a-sticky-d3-slider-remain-functional-as-page-scrolls -->
-
+      <h3>Agents and Accounts</h3>
       <div class="row">
         <div class="col-md-6 chart-area-all" id="chart-area1"></div>
         <div class="col-md-6 chart-area-all" id="chart-area2"></div>
@@ -71,6 +84,34 @@
 
         <div class="row" id="pkMap">
           <div class="col-md-12 chart-map" id="chart-area9"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h4 id="Footnote1">
+            About This Dashboard:
+          </h4>
+          <p>
+            All data sourced from State Bank Of Pakistan's
+            <a
+              href="http://www.sbp.org.pk/publications/acd/branchless.htm"
+              target="_blank"
+              >quarterly branchless banking newsletters</a
+            >.
+          </p>
+          <h4 id="Footnote2">About Me</h4>
+          <p>
+            I am financial inclusion specialist who often has to trawl through
+            obscure government databases to develop country-level analyses. I
+            thought it would be nice to develop a one-stop place for all data
+            available for at least one country.
+          </p>
+        </div>
+        <div class="col-md-6">
+          <button onclick="topFunction()" id="myBtn" title="Go to top">
+            Back To Top
+          </button>
         </div>
       </div>
     </div>

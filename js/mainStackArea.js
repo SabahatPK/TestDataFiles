@@ -59,7 +59,8 @@ StackedArea.prototype.initVis = function() {
     vis.title = vis.allData[0]["Province"];
   }
 
-  //outs - graphs need to always shopw which year they are depicting; point out somewhere on x-axis;
+  //outs - graphs need to always shopw which year they are depicting;
+  //point out somewhere on x-axis;
   vis.g = vis.svg
     .append("text")
     .attr("x", vis.dimensions.width / 2)
@@ -87,6 +88,7 @@ StackedArea.prototype.initVis = function() {
   //Define axes:
   vis.xAxis1 = d3.axisBottom(vis.xScale1).ticks(3);
   vis.yAxis1 = d3.axisLeft(vis.yScale1).ticks(5);
+  //outs - how to get tick marks to show years or months as time widens and shortens.
 
   //Place axes on chart:
   vis.xAxisCall = vis.g

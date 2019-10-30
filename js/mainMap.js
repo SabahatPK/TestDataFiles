@@ -5,7 +5,10 @@ MapChart = function(_parentElement, _featuresData, _meshData) {
   this.initVis();
 };
 
-//Wishlist - click on province to isolate that data in area charts.
+//OUTS - click on province to isolate that data in area charts; wishlist
+//outs - might have to use this library instead?
+//https://github.com/markmarkoh/datamaps#getting-started
+//https://github.com/markmarkoh/datamaps#using-custom-maps
 
 MapChart.prototype.initVis = function() {
   let vis = this;
@@ -26,10 +29,6 @@ MapChart.prototype.initVis = function() {
     .append("svg")
     .attr("width", vis.width)
     .attr("height", vis.height);
-  //outs - how to make each province "clickable"?
-  // .on("click", function() {
-  //   console.log("I clicked on a map");
-  // });
 
   vis.svg
     .append("path")
@@ -39,7 +38,10 @@ MapChart.prototype.initVis = function() {
     .attr("d", vis.path)
     .attr("opacity", 0.35)
     .attr("stroke", "black")
-    .attr("stroke-width", "1px");
+    .attr("stroke-width", "1px")
+    .on("click", function(geography) {
+      console.log(geography.features);
+    });
 
   vis.svg
     .append("path")

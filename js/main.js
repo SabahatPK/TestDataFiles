@@ -5,7 +5,6 @@ let promises = [
     "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/pakistan/pakistan-provinces.json"
   ),
 
-  //START HERE - add more rows; dates should be in order; make sure there are no empty cells
   d3.csv("data/AgentAccountData.csv"),
   d3.csv("data/GenderByProvince.csv")
 ];
@@ -13,19 +12,19 @@ let promises = [
 let parseTime = d3.timeParse("%Y");
 let formatTime = d3.timeFormat("%B %d, %Y");
 
-let sliderBegDate = new Date("1/1/2010");
+let sliderBegDate = new Date("1/1/2012");
 let sliderEndDate = new Date("12/31/2017");
 
-$("#dateLabel1").text("From " + formatTime(new Date("1/1/2010")));
+$("#dateLabel1").text("From " + formatTime(new Date("1/1/2012")));
 $("#dateLabel2").text(" to " + formatTime(new Date("12/31/2017")));
 
 // Add jQuery UI slider
 $("#slider").slider({
   range: true,
-  min: new Date("2010").getTime(),
+  min: new Date("2012").getTime(),
   max: new Date("2019").getTime(),
   step: new Date("4/1/2010").getTime() - new Date("1/1/2010").getTime(),
-  values: [new Date("2010").getTime(), new Date("2019").getTime()],
+  values: [new Date("2012").getTime(), new Date("2019").getTime()],
   slide: function(event, ui) {
     sliderBegDate = new Date(ui.values[0]);
     sliderEndDate = new Date(ui.values[1]);
@@ -34,6 +33,8 @@ $("#slider").slider({
     updateCharts();
   }
 });
+
+//outs - change colors to be grey scale? #design
 
 //outs - Test this by adding delay diliberately; also needs to be on empty page; so slider has to be loaded after data?
 while (promises.length.length === 0) {
@@ -119,7 +120,7 @@ Promise.all(promises).then(function(allData) {
   let smallDimensions = {
     height: 250,
     width: 200,
-    marginLeft: 55,
+    marginLeft: 60,
     marginRight: 20,
     marginTop: 25,
     marginBottom: 50
@@ -182,7 +183,7 @@ Promise.all(promises).then(function(allData) {
     smallDimensions
   );
 
-  //OUTS - why can't I create these on the fly?
+  // OUTS - why can't I create these on the fly?
   // nestedGenderData.map(
   //   each => new StackedArea("#chart-area3", onlyAzadKashmir, keys2)
   // );
@@ -199,6 +200,27 @@ function updateCharts() {
   stackAreaChart6.wrangleData(sliderBegDate, sliderEndDate);
   stackAreaChart7.wrangleData(sliderBegDate, sliderEndDate);
   stackAreaChart8.wrangleData(sliderBegDate, sliderEndDate);
+}
+
+//"Go to top" button:
+mybutton = document.getElementById("myBtn");
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {
+  scrollFunction();
+};
+function scrollFunction() {
+  if (
+    document.body.scrollTop > 500 ||
+    document.documentElement.scrollTop > 500
+  ) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.documentElement.scrollTop = 0;
 }
 
 //outs - asked Udemy about possible refactoring of code:
