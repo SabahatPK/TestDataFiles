@@ -6,9 +6,11 @@ MapChart = function(_parentElement, _featuresData, _meshData) {
 };
 
 //OUTS - click on province to isolate that data in area charts; wishlist
-//outs - might have to use this library instead?
+//Might have to use this library instead?
 //https://github.com/markmarkoh/datamaps#getting-started
 //https://github.com/markmarkoh/datamaps#using-custom-maps
+
+//OUTS - allow map to size down with containers.
 
 MapChart.prototype.initVis = function() {
   let vis = this;

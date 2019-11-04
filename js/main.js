@@ -34,6 +34,25 @@ $("#slider").slider({
   }
 });
 
+//Button to reset slider back to default dates
+$("#reset").click(function() {
+  $("#slider").slider("values", [
+    new Date("2012").getTime(),
+    new Date("2019").getTime()
+  ]);
+
+  let resetSliderDates = $("#slider").slider("values");
+
+  sliderBegDate = new Date(resetSliderDates[0]);
+  sliderEndDate = new Date(resetSliderDates[1]);
+
+  $("#dateLabel1").text("From " + formatTime(new Date(resetSliderDates[0])));
+  $("#dateLabel2").text(" to " + formatTime(new Date(resetSliderDates[1])));
+
+  updateCharts();
+});
+
+//outs - where does it make sense to add in regional comparisons, income gp comparisons
 //outs - change colors to be grey scale? #design
 
 //outs - Test this by adding delay diliberately; also needs to be on empty page; so slider has to be loaded after data?
@@ -183,11 +202,6 @@ Promise.all(promises).then(function(allData) {
     smallDimensions
   );
 
-  // OUTS - why can't I create these on the fly?
-  // nestedGenderData.map(
-  //   each => new StackedArea("#chart-area3", onlyAzadKashmir, keys2)
-  // );
-
   pakMap = new MapChart("#chart-area9", pkFeaturesData, pkMeshData);
 });
 
@@ -223,5 +237,36 @@ function topFunction() {
   document.documentElement.scrollTop = 0;
 }
 
-//outs - asked Udemy about possible refactoring of code:
-//https://www.udemy.com/course/masteringd3js/learn/lecture/9441358#questions/8522398
+//Create stand-alone legend for gender graphs
+let color1 = d3.scaleOrdinal(d3.schemePaired).domain(["Female", "Male"]);
+
+let standAloneLegend = d3
+  .select(".allGenderGraphs")
+  .append("svg")
+  .attr("width", 100)
+  .attr("height", 100)
+  .attr("transform", "translate(" + 100 + "," + -900 + ")")
+  .append("g")
+  .attr("class", "legend")
+  .attr("transform", "translate(" + 0 + "," + 25 + ")");
+
+["Female", "Male"].forEach(function(eachKey, index) {
+  let legendRow = standAloneLegend
+    .append("g")
+    .attr("transform", "translate(" + 0 + "," + index * 20 + ")");
+
+  legendRow
+    .append("rect")
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("fill", color1(eachKey));
+
+  legendRow
+    .append("text")
+    .attr("x", 50)
+    .attr("y", 10)
+    .style("font-size", "10px")
+    .attr("text-anchor", "end")
+    .style("text-transform", "capitalize")
+    .text(eachKey);
+});

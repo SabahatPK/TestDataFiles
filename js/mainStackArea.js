@@ -49,24 +49,25 @@ StackedArea.prototype.initVis = function() {
         vis.dimensions.marginBottom
     );
 
-  //OUTS - for entire gender graph section: add one legend
-
-  if (vis.keys[0] === "All Accounts") {
+  if (vis.keys[0] === "Active Accounts") {
     vis.title = "Active to Inactive Accounts";
-  } else if (vis.keys[0] === "Number of Active BB Agents") {
+  } else if (vis.keys[0] === "Active Agents") {
     vis.title = "Active to Inactive Agents";
   } else {
     vis.title = vis.allData[0]["Province"];
   }
 
   //outs - graphs need to always shopw which year they are depicting;
-  //point out somewhere on x-axis;
+  //When dates are all within 1 year, no way of knowing what that year is just by looking at
+  //the x-axis. Need to point out somewhere on x-axis;
+
   vis.g = vis.svg
     .append("text")
-    .attr("x", vis.dimensions.width / 2)
-    .attr("y", 50)
+    .attr("x", vis.dimensions.width / 2 + 40)
+    .attr("y", 80)
     .attr("text-anchor", "middle")
-    .style("font-size", "15px")
+    // .style("font-size", "15px")
+    .style("font-size", "90%")
     .text(vis.title);
 
   vis.g = vis.svg
@@ -88,7 +89,6 @@ StackedArea.prototype.initVis = function() {
   //Define axes:
   vis.xAxis1 = d3.axisBottom(vis.xScale1).ticks(3);
   vis.yAxis1 = d3.axisLeft(vis.yScale1).ticks(5);
-  //outs - how to get tick marks to show years or months as time widens and shortens.
 
   //Place axes on chart:
   vis.xAxisCall = vis.g
@@ -126,7 +126,7 @@ StackedArea.prototype.initVis = function() {
   vis.sliderValuesOne = vis.sliderValues[0];
   vis.sliderValuesTwo = vis.sliderValues[1];
 
-  vis.addLegend();
+  vis.keys[0] === "Female" ? null : vis.addLegend();
 
   vis.wrangleData(vis.sliderValuesOne, vis.sliderValuesTwo);
 };
