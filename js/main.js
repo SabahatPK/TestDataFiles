@@ -4,7 +4,6 @@ let promises = [
   d3.json(
     "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/pakistan/pakistan-provinces.json"
   ),
-
   d3.csv("data/AgentAccountData.csv"),
   d3.csv("data/GenderByProvince.csv")
 ];
@@ -153,12 +152,15 @@ Promise.all(promises).then(function(allData) {
     marginBottom: 100
   };
 
+  //OUTS - how to ensure chart title does not overlap with charts but still loads up with
+  //each constructor function?
   stackAreaChart1 = new StackedArea(
     "#chart-area1",
     agentData,
     keys,
     largeDimensions
   );
+
   stackAreaChart2 = new StackedArea(
     "#chart-area2",
     agentData,

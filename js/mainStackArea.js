@@ -17,13 +17,6 @@ StackedArea.prototype.initVis = function() {
     })
     .entries(vis.allData);
 
-  vis.genderTitle;
-  vis.nestedData.map(each =>
-    each.key !== "undefined"
-      ? (vis.genderTitle = "Account Ownership By Gender")
-      : (vis.genderTitle = "")
-  );
-
   (vis.width =
     vis.dimensions["width"] -
     vis.dimensions.marginLeft -
@@ -57,17 +50,19 @@ StackedArea.prototype.initVis = function() {
     vis.title = vis.allData[0]["Province"];
   }
 
-  //outs - graphs need to always shopw which year they are depicting;
+  //outs - graphs need to always show which year they are depicting;
   //When dates are all within 1 year, no way of knowing what that year is just by looking at
   //the x-axis. Need to point out somewhere on x-axis;
 
   vis.g = vis.svg
     .append("text")
-    .attr("x", vis.dimensions.width / 2 + 40)
+    .attr("x", vis.dimensions.width / 2 + 60)
     .attr("y", 80)
     .attr("text-anchor", "middle")
     // .style("font-size", "15px")
     .style("font-size", "90%")
+    .style("fill", "ff8350")
+    .style("font-weight", "bold")
     .text(vis.title);
 
   vis.g = vis.svg
@@ -177,6 +172,8 @@ StackedArea.prototype.updateVis = function() {
     .attr("class", "area")
     .attr("d", vis.area1)
     .style("fill", function(d) {
+      console.log(vis.color1(d.key));
+
       return vis.color1(d.key);
     })
     .style("fill-opacity", 0.5);
@@ -201,6 +198,8 @@ StackedArea.prototype.addLegend = function() {
     vis.legendRow = vis.legend
       .append("g")
       .attr("transform", "translate(" + 0 + "," + index * 20 + ")");
+
+    console.log(vis.color1(eachKey));
 
     vis.legendRow
       .append("rect")

@@ -5,34 +5,36 @@
     <meta name="description" content="" />
     <title>PK Financial Inclusion Data Dashboard</title>
     <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <!-- jQuery UI CSS -->
     <link rel="stylesheet" href="css/jquery-ui.min.css" />
     <link rel="stylesheet" href="css/jquery-ui.structure.min.css" />
     <link rel="stylesheet" href="css/jquery-ui.theme.min.css" />
     <!-- Custom CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css" />
   </head>
 
+  <!-- outs: need to learn how to work with branches like Git was MEANT to be used!! -->
+  <!-- outs: attribute noun project (for PK flag icon) and https://www.glyphicons.com/ -->
+
   <body>
-    <nav class="navbar navbar-default">
-      <div class="container">
-        <a class="navbar-brand" href="#"
-          ><img id="logo" src="img/noun_Pakistan_777656_v1.png" />Financial
-          Inclusion Data Dashboard</a
-        >
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="#Footnote1">About This Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#Footnote2">About Me</a>
-          </li>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <span id = "logoText">
+                  <img id="logo" src="img/noun_Pakistan_777656_v1.png" /> Pakistan Financial
+                  Inclusion Data Dashboard</a
+                >
+        </div>
+    <!-- outs: why do these icons dissapear when I hover over them? -->
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#Footnote1"><span class="glyphicon glyphicon-info-sign"></span> About This Dashboard</a></li>
+          <li><a href="#Footnote2"><span class="glyphicon glyphicon-user"></span> About Me</a></li>
         </ul>
       </div>
     </nav>
-
-    <!-- OUTS - Add attribution for Pakistan flag logo -->
 
     <!-- Bootstrap grid setup -->
     <div class="container">
@@ -50,14 +52,14 @@
       </div>
 
       <h3>Agents and Accounts</h3>
-      <div class="row">
+      <div class="card row">
         <div class="col-md-6" id="chart-area1"></div>
         <div class="col-md-6" id="chart-area2"></div>
       </div>
 
       <br />
 
-      <div class="allGenderGraphs">
+      <div class="card allGenderGraphs">
         <h3 id="allGenderGraphsTitle">Account Ownership By Gender</h3>
         <div class="row">
           <div class="col-md-4"></div>
@@ -89,6 +91,7 @@
         </div>
       </div>
 
+      
       <div class="row">
         <div class="col-md-8">
           <h4 id="Footnote1">
@@ -104,11 +107,12 @@
           </p>
           <h4 id="Footnote2">About Me</h4>
           <p>
-            I am financial inclusion specialist who often has to trawl through
-            obscure government databases to develop country-level analyses. I
-            thought it would be nice to develop a one-stop place for all data
-            available for at least one country.
-          </p>
+            I am a
+            <a href="https://www.linkedin.com/in/sabahatiqbal/" target="_blank"
+              >global financial inclusion specialist </a
+            >who often has to trawl through obscure government databases to
+            develop country-level analyses. One web site encapsulating all
+            financial inclusion data would have been useful. I decided to create one for Pakistan.</p>
         </div>
         <div class="col-md-8">
           <button onclick="topFunction()" id="myBtn" title="Go to top">
@@ -124,6 +128,7 @@
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/d3.min.js"></script>
     <script src="//d3js.org/topojson.v2.min.js"></script>
+    <script src="node_modules/datamaps/dist/datamaps.world.min.js"></script>
     <!-- Custom JS -->
     <script src="js/mainStackArea.js"></script>
     <script src="js/mainMap.js"></script>

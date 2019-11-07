@@ -1,3 +1,18 @@
+body {
+  font-family: "Open Sans", sans-serif;
+}
+
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
 #chart-area svg {
   margin-left: auto;
   margin-right: auto;
@@ -8,9 +23,21 @@
   height: 50px;
 }
 
+#logoText {
+  font-size: 30px;
+}
+
 .navbar-brand {
   height: 60px;
   padding: 5px 0px;
+}
+
+.navbar {
+  background-color: transparent;
+}
+
+.nav-item {
+  margin-right: 100px;
 }
 
 .axis {
@@ -65,11 +92,16 @@
   z-index: -1;
 }
 
-/* OUTS - slide no longer works after scrolling down  */
+.boundary:hover {
+  fill: blueviolet;
+}
+
 #selections {
   position: sticky;
   top: 0;
-  background-color: #b2df8a;
+  background-color: rgb(142, 187, 217);
+  border: black;
+  border-width: 10px;
   z-index: 1;
 }
 
@@ -86,7 +118,7 @@
   z-index: 99; /* Make sure it does not overlap */
   border: none; /* Remove borders */
   outline: none; /* Remove outline */
-  background-color: #279af1; /* Set a background color */
+  background-color: rgb(142, 187, 217); /* Set a background color */
   color: white; /* Text color */
   cursor: pointer; /* Add a mouse pointer on hover */
   padding: 15px; /* Some padding */
@@ -97,3 +129,28 @@
 #myBtn:hover {
   background-color: #555; /* Add a dark-grey background on hover */
 }
+
+/* DElete after sorting out map */
+#content .info {
+  height: 20px;
+}
+
+#content .map path {
+  fill: #aaa;
+  stroke: #fff;
+}
+
+#content .bounding-box rect {
+  fill: none;
+  stroke: #333;
+  stroke-dasharray: 2, 1;
+}
+
+#content .centroid {
+  display: none;
+}
+
+#content .centroid circle {
+  fill: red;
+}
+/* End of africa map styling */
