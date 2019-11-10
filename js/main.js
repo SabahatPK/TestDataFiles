@@ -1,5 +1,3 @@
-let stackAreaChart1;
-
 let promises = [
   d3.json(
     "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/pakistan/pakistan-provinces.json"
@@ -51,9 +49,16 @@ $("#reset").click(function() {
   updateCharts();
 });
 
+//Dropdown to select which indicators to visualize:
+let genderFlag = false;
+$("#indicatorType").change(function() {
+  let graphType = $(this).val();
+  genderFlag = graphType;
+  console.log(genderFlag);
+});
+
 //outs - where does it make sense to add in regional comparisons, income gp comparisons
 //outs - change colors to be grey scale? #design
-
 //outs - Test this by adding delay diliberately; also needs to be on empty page; so slider has to be loaded after data?
 while (promises.length.length === 0) {
   $("#loading").html("Data loading...");
@@ -143,66 +148,61 @@ Promise.all(promises).then(function(allData) {
     marginTop: 25,
     marginBottom: 50
   };
-  let largeDimensions = {
-    height: 450,
-    width: 400,
-    marginLeft: 80,
-    marginRight: 40,
-    marginTop: 50,
-    marginBottom: 100
-  };
 
-  //OUTS - how to ensure chart title does not overlap with charts but still loads up with
-  //each constructor function?
-  stackAreaChart1 = new StackedArea(
-    "#chart-area1",
-    agentData,
-    keys,
-    largeDimensions
-  );
+  //OUTS - make chart title bold
 
-  stackAreaChart2 = new StackedArea(
-    "#chart-area2",
-    agentData,
-    keys1,
-    largeDimensions
-  );
-  stackAreaChart3 = new StackedArea(
-    "#chart-area5",
-    onlyAzadKashmir,
-    keys2,
-    smallDimensions
-  );
-  stackAreaChart4 = new StackedArea(
-    "#chart-area6",
-    onlyBalochistan,
-    keys2,
-    smallDimensions
-  );
-  stackAreaChart5 = new StackedArea(
-    "#chart-area4",
-    onlyGilgitBaltistan,
-    keys2,
-    smallDimensions
-  );
-  stackAreaChart6 = new StackedArea(
-    "#chart-area7",
-    onlyPunjabIncludingISB,
-    keys2,
-    smallDimensions
-  );
-  stackAreaChart7 = new StackedArea(
-    "#chart-area3",
-    onlyKhyberPakhtunkhwa,
-    keys2,
-    smallDimensions
-  );
-  stackAreaChart8 = new StackedArea(
-    "#chart-area8",
-    onlySindh,
-    keys2,
-    smallDimensions
-  );
+  if (genderFlag === true) {
+    stackAreaChart3 = new StackedArea(
+      "#chart-area5",
+      onlyAzadKashmir,
+      keys2,
+      smallDimensions
+    );
+    stackAreaChart4 = new StackedArea(
+      "#chart-area6",
+      onlyBalochistan,
+      keys2,
+      smallDimensions
+    );
+    stackAreaChart5 = new StackedArea(
+      "#chart-area4",
+      onlyGilgitBaltistan,
+      keys2,
+      smallDimensions
+    );
+    stackAreaChart6 = new StackedArea(
+      "#chart-area7",
+      onlyPunjabIncludingISB,
+      keys2,
+      smallDimensions
+    );
+    stackAreaChart7 = new StackedArea(
+      "#chart-area3",
+      onlyKhyberPakhtunkhwa,
+      keys2,
+      smallDimensions
+    );
+    stackAreaChart8 = new StackedArea(
+      "#chart-area8",
+      onlySindh,
+      keys2,
+      smallDimensions
+    );
+  } else {
+    stackAreaChart1 = new StackedArea(
+      "#chart-area3",
+      agentData,
+      keys,
+      smallDimensions
+    );
+
+    stackAreaChart2 = new StackedArea(
+      "#chart-area4",
+      agentData,
+      keys1,
+      smallDimensions
+    );
+  }
 
   pakMap = new MapChart("#chart-area9", pkFeaturesData, pkMeshData);
 });

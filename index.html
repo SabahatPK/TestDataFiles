@@ -25,7 +25,7 @@
             <a class="navbar-brand" href="#">
                 <span id = "logoText">
                   <img id="logo" src="img/noun_Pakistan_777656_v1.png" /> Pakistan Financial
-                  Inclusion Data Dashboard</a
+                  Inclusion Data Dashboard - Round 2</a
                 >
         </div>
     <!-- outs: why do these icons dissapear when I hover over them? -->
@@ -37,10 +37,19 @@
     </nav>
 
     <!-- Bootstrap grid setup -->
-    <div class="container">
+    <div class="container">     
+
       <div id="selections" class="row">
         <p id="loading"></p>
-        <div class="col-md-10">
+        <div class="col-md-2">
+
+          <select name="indicatorType" id="indicatorType" >
+              <option value="false">Accounts and Agents</option>
+              <option value="true">Gender Breakdown</option>
+            </select>
+        </div>
+        
+        <div class="col-md-8">
           <div id="slider"></div>
           <label
             ><span id="dateLabel1"></span><span id="dateLabel2"></span
@@ -51,46 +60,26 @@
         </div>
       </div>
 
-      <h3>Agents and Accounts</h3>
+      <br>
+      
       <div class="card row">
-        <div class="col-md-6" id="chart-area1"></div>
-        <div class="col-md-6" id="chart-area2"></div>
+          <h3 id="graphTitle"></h3>
+        
+          <div class="col-md-4" id="chart-area3"></div>
+          <div class="col-md-4" id="chart-area4"></div>
+          <div class="col-md-4" id="chart-area5"></div>
+      
+        
+          <div class="col-md-4" id="chart-area6" ></div>
+          <div class="col-md-4" id="chart-area7"></div>
+          <div class="col-md-4" id="chart-area8"></div>
+       
       </div>
+      
 
       <br />
 
-      <div class="card allGenderGraphs">
-        <h3 id="allGenderGraphsTitle">Account Ownership By Gender</h3>
-        <div class="row">
-          <div class="col-md-4"></div>
-          <div class="col-md-4" id="chart-area4"></div>
-          <div class="col-md-4" id="chart-area5"></div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-4" id="chart-area3"></div>
-          <div class="col-md-4"></div>
-          <div class="col-md-4" id="chart-area7"></div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-4" id="chart-area6"></div>
-          <div class="col-md-4"></div>
-          <div class="col-md-4" id="chart-area8"></div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-3"></div>
-          <div class="col-md-3"></div>
-          <div class="col-md-3"></div>
-          <div class="col-md-3"></div>
-        </div>
-
-        <div class="row" id="pkMap">
-          <div class="col-md-12 chart-map" id="chart-area9"></div>
-        </div>
-      </div>
-
+     
       
       <div class="row">
         <div class="col-md-8">

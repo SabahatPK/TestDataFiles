@@ -28,12 +28,14 @@ MapChart.prototype.initVis = function() {
     .attr("width", vis.width)
     .attr("height", vis.height);
 
+  //start here: https://www.youtube.com/watch?v=9ZB1EgaJnBU
+
   vis.svg
     .append("path")
     .attr("fill", "rgb(255, 208, 44)")
     .datum(vis.pakFeaturesData)
-    .attr("class", "land")
     .attr("d", vis.path)
+    .attr("class", "land")
     .attr("opacity", 0.35)
     .attr("stroke", "black")
     .attr("stroke-width", "1px")
@@ -43,8 +45,8 @@ MapChart.prototype.initVis = function() {
 
   vis.svg
     .append("path")
-    .datum(vis.pakMeshData)
     .attr("class", "boundary")
+    .datum(vis.pakMeshData)
     .attr("d", vis.path)
     .attr("stroke", "black")
     .attr("stroke-width", "0.5px")
