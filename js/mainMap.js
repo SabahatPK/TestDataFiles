@@ -28,7 +28,7 @@ MapChart.prototype.initVis = function() {
     .attr("width", vis.width)
     .attr("height", vis.height);
 
-  //start here: https://www.youtube.com/watch?v=9ZB1EgaJnBU
+  //outs: https://www.youtube.com/watch?v=9ZB1EgaJnBU
 
   vis.svg
     .append("path")
