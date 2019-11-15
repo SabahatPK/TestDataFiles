@@ -1,20 +1,33 @@
+//start here : practice map-making!! Watch Kurran videos and others.
+
 let promises = [
-  d3.json(
-    "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/pakistan/pakistan-provinces.json"
-  ),
   d3.csv("data/AgentAccountData.csv"),
-  d3.csv("data/GenderByProvince.csv")
+  d3.csv("data/GenderByProvince.csv"),
+  d3.json("/data/pakistan/pakistan-districts.json"),
+  d3.json("/data/pakistan/pakistan-provinces.json"),
+  d3.csv("data/microfinance/pakMFDummyData.csv")
 ];
 
 let parseTime = d3.timeParse("%Y");
 let formatTime = d3.timeFormat("%B %d, %Y");
+
+//outs - DELETE THIS
+// var d1 = new Date();
+// var d2 = new Date(d1);
+// console.log(d1.getTime());
+// var same = d1.getTime() === d2.getTime();
+// var notSame = d1.getTime() !== d2.getTime();
+// console.log(same);
+// console.log(notSame);
 
 let sliderBegDate = new Date("1/1/2012");
 let sliderEndDate = new Date("12/31/2017");
 
 $("#dateLabel1").text("From " + formatTime(new Date("1/1/2012")));
 $("#dateLabel2").text(" to " + formatTime(new Date("12/31/2017")));
-
+//outs - there is def something wrong with the slider dates; they don't always align up
+//with the dates on charts; identify all the "wrong" dating logic with unit tests then figure out
+//what the pattern is and then FIX.
 // Add jQuery UI slider
 $("#slider").slider({
   range: true,
@@ -56,17 +69,15 @@ while (promises.length.length === 0) {
 }
 
 Promise.all(promises).then(function(allData) {
-  let geoData = allData[0];
-  let agentData = allData[1];
-  let genderData = allData[2];
+  let agentData = allData[0];
+  let genderData = allData[1];
+  let pkDistrict = allData[2];
+  let pkProvince = allData[3];
+  let pkDistMF = allData[4];
 
-  let pkFeaturesData = topojson.feature(geoData, geoData.objects.PAK_adm1);
-  let pkMeshData = topojson.mesh(geoData, geoData.objects.PAK_adm1, function(
-    a,
-    b
-  ) {
-    return a !== b;
-  });
+  const districts = topojson.feature(pkDistrict, pkDistrict.objects.PAK_adm3);
+
+  const provinces = topojson.feature(pkProvince, pkProvince.objects.PAK_adm1);
 
   // Prepare and clean agent, account data
   //OUTS - there has to be a way to cycle through each dataset via allData
@@ -97,8 +108,24 @@ Promise.all(promises).then(function(allData) {
     }
   });
 
+  pkDistMF.forEach(function(d) {
+    //Update all values to be numbers/dates instead of string
+    for (let property in d) {
+      if (
+        d.hasOwnProperty(property) &&
+        property !== "Date" &&
+        property !== "Province" &&
+        property !== "District"
+      ) {
+        d[property] = parseFloat(d[property].replace(/,/g, ""));
+      } else if (d.hasOwnProperty(property) && property == "Date") {
+        d[property] = new Date(d[property]);
+      }
+    }
+  });
+
   //Prep and clean gender data
-  var nestedGenderData = d3
+  var nestedGenderData = d3 //outs - delete if not being used anywhere
     .nest()
     .key(function(d) {
       return d.Province;
@@ -140,11 +167,45 @@ Promise.all(promises).then(function(allData) {
     marginBottom: 50
   };
 
+  let largeDimensions = {
+    height: 800,
+    width: 800,
+    marginLeft: 60,
+    marginRight: 20,
+    marginTop: 25,
+    marginBottom: 50
+  };
+
+  //Set up default visualization - upon 1st page load:
+  stackAreaChart1 = new StackedArea(
+    "#chart-area1",
+    agentData,
+    keys,
+    smallDimensions
+  );
+
+  stackAreaChart2 = new StackedArea(
+    "#chart-area2",
+    agentData,
+    keys1,
+    smallDimensions
+  );
+
   //Choose graphs to visualize:
   $("#indicatorType").change(function() {
+    //Remove any old graphs
+    d3.selectAll("#chart-area1 > *").remove();
+    d3.selectAll("#chart-area2 > *").remove();
+    d3.selectAll("#chart-area3 > *").remove();
+    d3.selectAll("#chart-area4 > *").remove();
+    d3.selectAll("#chart-area5 > *").remove();
+    d3.selectAll("#chart-area6 > *").remove();
+    d3.selectAll("#chart-area7 > *").remove();
+    d3.selectAll("#chart-area8 > *").remove();
+
     let graphType = $(this).val();
-    console.log(graphType);
-    if (graphType === true) {
+
+    if (graphType === "gender") {
       stackAreaChart3 = new StackedArea(
         "#chart-area3",
         onlyAzadKashmir,
@@ -181,7 +242,15 @@ Promise.all(promises).then(function(allData) {
         keys2,
         smallDimensions
       );
-    } else {
+    } else if (graphType === "MFmap") {
+      mapOfPak = new MapChart(
+        "#chart-area3",
+        districts,
+        provinces,
+        pkDistMF,
+        largeDimensions
+      );
+    } else if (graphType === "AccAndAgent") {
       stackAreaChart1 = new StackedArea(
         "#chart-area1",
         agentData,
@@ -199,20 +268,27 @@ Promise.all(promises).then(function(allData) {
   });
 });
 
+//outs - create unit tests that can be rerun!
+
 function updateCharts() {
-  stackAreaChart1.wrangleData(sliderBegDate, sliderEndDate);
-  stackAreaChart2.wrangleData(sliderBegDate, sliderEndDate);
-  stackAreaChart3.wrangleData(sliderBegDate, sliderEndDate);
-  stackAreaChart4.wrangleData(sliderBegDate, sliderEndDate);
-  stackAreaChart5.wrangleData(sliderBegDate, sliderEndDate);
-  stackAreaChart6.wrangleData(sliderBegDate, sliderEndDate);
-  stackAreaChart7.wrangleData(sliderBegDate, sliderEndDate);
-  stackAreaChart8.wrangleData(sliderBegDate, sliderEndDate);
+  if ($("#indicatorType").val() === "gender") {
+    stackAreaChart3.wrangleData(sliderBegDate, sliderEndDate);
+    stackAreaChart4.wrangleData(sliderBegDate, sliderEndDate);
+    stackAreaChart5.wrangleData(sliderBegDate, sliderEndDate);
+    stackAreaChart6.wrangleData(sliderBegDate, sliderEndDate);
+    stackAreaChart7.wrangleData(sliderBegDate, sliderEndDate);
+    stackAreaChart8.wrangleData(sliderBegDate, sliderEndDate);
+  } else if ($("#indicatorType").val() === "MFmap") {
+    mapOfPak.wrangleData(sliderBegDate, sliderEndDate);
+  } else if ($("#indicatorType").val() === "AccAndAgent") {
+    stackAreaChart1.wrangleData(sliderBegDate, sliderEndDate);
+    stackAreaChart2.wrangleData(sliderBegDate, sliderEndDate);
+  }
 }
 
 //"Go to top" button:
 mybutton = document.getElementById("myBtn");
-// When the user scrolls down 20px from the top of the document, show the button
+
 window.onscroll = function() {
   scrollFunction();
 };
@@ -226,7 +302,7 @@ function scrollFunction() {
     mybutton.style.display = "none";
   }
 }
-// When the user clicks on the button, scroll to the top of the document
+
 function topFunction() {
   document.documentElement.scrollTop = 0;
 }

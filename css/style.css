@@ -1,3 +1,5 @@
+/* outs/design - I like this color; use somwhere else as complementary color: // .style("fill", "ff8350") */
+
 body {
   font-family: "Open Sans", sans-serif;
 }
@@ -92,6 +94,11 @@ body {
   /* z-index: -1; */
 }
 
+/* outs: why is the title not showing up on top of graph */
+.graphTitle {
+  z-index: 1;
+}
+
 .land:hover {
   fill: blueviolet;
 }
@@ -130,27 +137,21 @@ body {
   background-color: #555; /* Add a dark-grey background on hover */
 }
 
-/* DElete after sorting out map */
-#content .info {
-  height: 20px;
+/* Map styling: */
+.district:hover {
+  fill: gold;
 }
 
-#content .map path {
-  fill: #aaa;
-  stroke: #fff;
+/* outs - how to wrap text? */
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 80px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
 }
-
-#content .bounding-box rect {
-  fill: none;
-  stroke: #333;
-  stroke-dasharray: 2, 1;
-}
-
-#content .centroid {
-  display: none;
-}
-
-#content .centroid circle {
-  fill: red;
-}
-/* End of africa map styling */

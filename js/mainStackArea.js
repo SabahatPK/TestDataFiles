@@ -65,11 +65,11 @@ StackedArea.prototype.initVis = function() {
     .attr("x", vis.dimensions.width / 2 + 60)
     .attr("y", 80)
     .attr("text-anchor", "middle")
-    // .style("font-size", "15px")
     .style("font-size", "90%")
-    .style("fill", "ff8350")
     .style("font-weight", "bold")
+    .attr("class", "graphTitle")
     .text(vis.title);
+  //OUTS - make vis.title on TOP of graph, not behind
 
   vis.g = vis.svg
     .append("g")
@@ -191,10 +191,8 @@ StackedArea.prototype.updateVis = function() {
 
   vis.blob
     .style("fill-opacity", 0)
-    //outs - update transition so it builds from left to right
-    //comme ca: https://jsfiddle.net/dzo36njt/5/
     .transition(d3.transition().duration(1000))
-    .style("fill-opacity", 0.5);
+    .style("fill-opacity", 1);
 };
 
 StackedArea.prototype.addLegend = function() {
