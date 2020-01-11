@@ -1,342 +1,79 @@
-//start here : practice map-making!! Watch Kurran videos and others.
-
-let promises = [
-  d3.csv("data/AgentAccountData.csv"),
-  d3.csv("data/GenderByProvince.csv"),
-  d3.json("/data/pakistan/pakistan-districts.json"),
-  d3.json("/data/pakistan/pakistan-provinces.json"),
-  d3.csv("data/microfinance/pakMFDummyData.csv")
-];
+let promises = [d3.csv("data/Mar2007.csv")];
 
 let parseTime = d3.timeParse("%Y");
 let formatTime = d3.timeFormat("%B %d, %Y");
 
-//outs - DELETE THIS
-// var d1 = new Date();
-// var d2 = new Date(d1);
-// console.log(d1.getTime());
-// var same = d1.getTime() === d2.getTime();
-// var notSame = d1.getTime() !== d2.getTime();
-// console.log(same);
-// console.log(notSame);
-
-let sliderBegDate = new Date("1/1/2012");
-let sliderEndDate = new Date("12/31/2017");
-
-$("#dateLabel1").text("From " + formatTime(new Date("1/1/2012")));
-$("#dateLabel2").text(" to " + formatTime(new Date("12/31/2017")));
-//outs - there is def something wrong with the slider dates; they don't always align up
-//with the dates on charts; identify all the "wrong" dating logic with unit tests then figure out
-//what the pattern is and then FIX.
-// Add jQuery UI slider
-$("#slider").slider({
-  range: true,
-  min: new Date("2012").getTime(),
-  max: new Date("2019").getTime(),
-  step: new Date("4/1/2010").getTime() - new Date("1/1/2010").getTime(),
-  values: [new Date("2012").getTime(), new Date("2019").getTime()],
-  slide: function(event, ui) {
-    sliderBegDate = new Date(ui.values[0]);
-    sliderEndDate = new Date(ui.values[1]);
-    $("#dateLabel1").text("From " + formatTime(new Date(ui.values[0])));
-    $("#dateLabel2").text(" to " + formatTime(new Date(ui.values[1])));
-    updateCharts();
-  }
-});
-
-//Button to reset slider back to default dates
-$("#reset").click(function() {
-  $("#slider").slider("values", [
-    new Date("2012").getTime(),
-    new Date("2019").getTime()
-  ]);
-
-  let resetSliderDates = $("#slider").slider("values");
-
-  sliderBegDate = new Date(resetSliderDates[0]);
-  sliderEndDate = new Date(resetSliderDates[1]);
-
-  $("#dateLabel1").text("From " + formatTime(new Date(resetSliderDates[0])));
-  $("#dateLabel2").text(" to " + formatTime(new Date(resetSliderDates[1])));
-
-  updateCharts();
-});
-
-//outs - where does it make sense to add in regional comparisons, income gp comparisons
-//outs - Test this by adding delay diliberately; also needs to be on empty page; so slider has to be loaded after data?
-while (promises.length.length === 0) {
-  $("#loading").html("Data loading...");
-}
+let checkStrings = {
+  checkNoSpaceRegex: x => x.match(/^[a-zA-Z0-9]*$/gm)
+};
 
 Promise.all(promises).then(function(allData) {
-  let agentData = allData[0];
-  let genderData = allData[1];
-  let pkDistrict = allData[2];
-  let pkProvince = allData[3];
-  let pkDistMF = allData[4];
+  let file = allData[0];
+  let data = "";
 
-  const districts = topojson.feature(pkDistrict, pkDistrict.objects.PAK_adm3);
-
-  const provinces = topojson.feature(pkProvince, pkProvince.objects.PAK_adm1);
-
-  // Prepare and clean agent, account data
-  //OUTS - there has to be a way to cycle through each dataset via allData
-  //rather than repeat code on each individual dataset? Skip geoJSON dataset
-  agentData.forEach(function(d) {
-    //Update all values to be numbers/dates instead of string
+  file.forEach(function(d) {
+    //Clean up data as needed:
     for (let property in d) {
-      if (d.hasOwnProperty(property) && property !== "Date") {
-        d[property] = parseFloat(d[property].replace(/,/g, ""));
-      } else if (d.hasOwnProperty(property) && property == "Date") {
+      //Create a new row
+      $("#checkTable tr:last").after("<tr id = 'latestRow'><td>1</td></tr>");
+      if (d.hasOwnProperty(property) && property == "Date") {
         d[property] = new Date(d[property]);
+        data = d[property];
+        $("#latestRow").append("<td></td>");
+      } else if (d.hasOwnProperty(property) && property !== "Date") {
+        if (property === "Province") {
+          if (
+            d[property] === "BALUCHISTAN" ||
+            d[property] === "AZAD JAMMU AND KASHMIR (AJK)" ||
+            d[property] === "FEDERALLY ADMINISTRATED TRIBAL AREAS (FATA)" ||
+            d[property] === "GILGIT-BALTISTAN (GB)" ||
+            d[property] === "ISLAMABAD CAPITAL TERRITORY (ICT)" ||
+            d[property] === "KHYBER-PAKHTUNKHWA (KP)" ||
+            d[property] === "PUNJAB" ||
+            d[property] === "SINDH"
+          ) {
+            d[property] = "OK";
+          }
+        } else if (property === "District") {
+          if (checkStrings.checkNoSpaceRegex(d[property])) {
+            d[property] = "OK";
+          }
+        } else if (
+          property === "Offices - Fixed" ||
+          property === "Offices - Mobile" ||
+          property === "Active Borrowers" ||
+          property === "Gross Loan Portfolio(PKR)" ||
+          property === "Active Savers" ||
+          property === "Value of Savings(PKR)" ||
+          property === "Potential Microfinance Market"
+        ) {
+          if (
+            d[property] === "-" ||
+            (typeof d[property] === "number" && isFinite(value))
+          ) {
+            d[property] = "OK";
+          }
+        }
       }
+      //Then populate each col of that row with data from csv file:
+      console.log(d[property]);
     }
-  });
-
-  genderData.forEach(function(d) {
-    //Update all values to be numbers/dates instead of string
-    for (let property in d) {
-      if (
-        d.hasOwnProperty(property) &&
-        property !== "Date" &&
-        property !== "Province"
-      ) {
-        d[property] = parseFloat(d[property].replace(/,/g, ""));
-      } else if (d.hasOwnProperty(property) && property == "Date") {
-        d[property] = new Date(d[property]);
-      }
-    }
-  });
-
-  pkDistMF.forEach(function(d) {
-    //Update all values to be numbers/dates instead of string
-    for (let property in d) {
-      if (
-        d.hasOwnProperty(property) &&
-        property !== "Date" &&
-        property !== "Province" &&
-        property !== "District"
-      ) {
-        d[property] = parseFloat(d[property].replace(/,/g, ""));
-      } else if (d.hasOwnProperty(property) && property == "Date") {
-        d[property] = new Date(d[property]);
-      }
-    }
-  });
-
-  //Prep and clean gender data
-  var nestedGenderData = d3 //outs - delete if not being used anywhere
-    .nest()
-    .key(function(d) {
-      return d.Province;
-    })
-    .entries(genderData);
-
-  let onlyAzadKashmir = genderData.filter(
-    each => each.Province === "Azad Kashmir"
-  );
-
-  let onlyBalochistan = genderData.filter(
-    each => each.Province === "Balochistan"
-  );
-
-  let onlyGilgitBaltistan = genderData.filter(
-    each => each.Province === "Gilgit Baltistan"
-  );
-
-  let onlyPunjabIncludingISB = genderData.filter(
-    each => each.Province === "Punjab (Including ISB)"
-  );
-
-  let onlyKhyberPakhtunkhwa = genderData.filter(
-    each => each.Province === "Khyber Pakhtunkhwa"
-  );
-
-  let onlySindh = genderData.filter(each => each.Province === "Sindh");
-
-  let keys = ["Active Accounts", "All Accounts"];
-  let keys1 = ["Active Agents", "All Agents"];
-  let keys2 = ["Female", "Male"];
-
-  let smallDimensions = {
-    height: 250,
-    width: 200,
-    marginLeft: 60,
-    marginRight: 20,
-    marginTop: 25,
-    marginBottom: 50
-  };
-
-  let largeDimensions = {
-    height: 800,
-    width: 800,
-    marginLeft: 60,
-    marginRight: 20,
-    marginTop: 25,
-    marginBottom: 50
-  };
-
-  //Set up default visualization - upon 1st page load:
-  stackAreaChart1 = new StackedArea(
-    "#chart-area1",
-    agentData,
-    keys,
-    smallDimensions
-  );
-
-  stackAreaChart2 = new StackedArea(
-    "#chart-area2",
-    agentData,
-    keys1,
-    smallDimensions
-  );
-
-  //Choose graphs to visualize:
-  $("#indicatorType").change(function() {
-    //Remove any old graphs
-    d3.selectAll("#chart-area1 > *").remove();
-    d3.selectAll("#chart-area2 > *").remove();
-    d3.selectAll("#chart-area3 > *").remove();
-    d3.selectAll("#chart-area4 > *").remove();
-    d3.selectAll("#chart-area5 > *").remove();
-    d3.selectAll("#chart-area6 > *").remove();
-    d3.selectAll("#chart-area7 > *").remove();
-    d3.selectAll("#chart-area8 > *").remove();
-
-    let graphType = $(this).val();
-
-    if (graphType === "gender") {
-      stackAreaChart3 = new StackedArea(
-        "#chart-area3",
-        onlyAzadKashmir,
-        keys2,
-        smallDimensions
-      );
-      stackAreaChart4 = new StackedArea(
-        "#chart-area4",
-        onlyBalochistan,
-        keys2,
-        smallDimensions
-      );
-      stackAreaChart5 = new StackedArea(
-        "#chart-area5",
-        onlyGilgitBaltistan,
-        keys2,
-        smallDimensions
-      );
-      stackAreaChart6 = new StackedArea(
-        "#chart-area6",
-        onlyPunjabIncludingISB,
-        keys2,
-        smallDimensions
-      );
-      stackAreaChart7 = new StackedArea(
-        "#chart-area7",
-        onlyKhyberPakhtunkhwa,
-        keys2,
-        smallDimensions
-      );
-      stackAreaChart8 = new StackedArea(
-        "#chart-area8",
-        onlySindh,
-        keys2,
-        smallDimensions
-      );
-    } else if (graphType === "MFmap") {
-      mapOfPak = new MapChart(
-        "#chart-area3",
-        districts,
-        provinces,
-        pkDistMF,
-        largeDimensions
-      );
-    } else if (graphType === "AccAndAgent") {
-      stackAreaChart1 = new StackedArea(
-        "#chart-area1",
-        agentData,
-        keys,
-        smallDimensions
-      );
-
-      stackAreaChart2 = new StackedArea(
-        "#chart-area2",
-        agentData,
-        keys1,
-        smallDimensions
-      );
-    }
+    //Then print checks onto table:
   });
 });
 
-//outs - create unit tests that can be rerun!
-
-function updateCharts() {
-  if ($("#indicatorType").val() === "gender") {
-    stackAreaChart3.wrangleData(sliderBegDate, sliderEndDate);
-    stackAreaChart4.wrangleData(sliderBegDate, sliderEndDate);
-    stackAreaChart5.wrangleData(sliderBegDate, sliderEndDate);
-    stackAreaChart6.wrangleData(sliderBegDate, sliderEndDate);
-    stackAreaChart7.wrangleData(sliderBegDate, sliderEndDate);
-    stackAreaChart8.wrangleData(sliderBegDate, sliderEndDate);
-  } else if ($("#indicatorType").val() === "MFmap") {
-    mapOfPak.wrangleData(sliderBegDate, sliderEndDate);
-  } else if ($("#indicatorType").val() === "AccAndAgent") {
-    stackAreaChart1.wrangleData(sliderBegDate, sliderEndDate);
-    stackAreaChart2.wrangleData(sliderBegDate, sliderEndDate);
-  }
-}
-
-//"Go to top" button:
-mybutton = document.getElementById("myBtn");
-
-window.onscroll = function() {
-  scrollFunction();
-};
-function scrollFunction() {
-  if (
-    document.body.scrollTop > 500 ||
-    document.documentElement.scrollTop > 500
-  ) {
-    mybutton.style.display = "block";
-  } else {
-    mybutton.style.display = "none";
-  }
-}
-
-function topFunction() {
-  document.documentElement.scrollTop = 0;
-}
-
-//Create stand-alone legend for gender graphs
-let color1 = d3.scaleOrdinal(d3.schemePaired).domain(["Female", "Male"]);
-
-let standAloneLegend = d3
-  .select(".allGenderGraphs")
-  .append("svg")
-  .attr("width", 100)
-  .attr("height", 100)
-  .attr("transform", "translate(" + 100 + "," + -900 + ")")
-  .append("g")
-  .attr("class", "legend")
-  .attr("transform", "translate(" + 0 + "," + 25 + ")");
-
-["Female", "Male"].forEach(function(eachKey, index) {
-  let legendRow = standAloneLegend
-    .append("g")
-    .attr("transform", "translate(" + 0 + "," + index * 20 + ")");
-
-  legendRow
-    .append("rect")
-    .attr("width", 10)
-    .attr("height", 10)
-    .attr("fill", color1(eachKey));
-
-  legendRow
-    .append("text")
-    .attr("x", 50)
-    .attr("y", 10)
-    .style("font-size", "10px")
-    .attr("text-anchor", "end")
-    .style("text-transform", "capitalize")
-    .text(eachKey);
-});
+// File checks:
+//Col 1 - Date, convert to date format and print in table
+//Col 2 - Province; check name matches against given, might have to make all upperCase before comparing
+//Col 3 - District; print names that have spaces to check they are OK to have spaces
+//Col 4 - Offices - Fixed; should either be "-" or a number
+//Col 5 - Offices - Mobile; should either be "-" or a number
+//Col 6 - Active Borrowers; should either be "-" or a number
+//Col 7 - Gross Loan Portfolio(PKR); should either be "-" or a number
+//Col 8 - Active Savers; should either be "-" or a number
+//Col 9 - Value of Savings(PKR); should either be "-" or a number
+//Col 10 - Potential Microfinance Market; should either be "-" or a number
+//Other - cross-check a row of data per Province; pick a random row per Province
+//Other - identify all rows that have "-" and cross-refernce a few to make sure that they are all "-" or N/A in original data
+//Other - identify all rows that have 0 and cross-refernce a few to make sure that they are all 0 in original data
+//Other - add dummy data to trip negative test cases

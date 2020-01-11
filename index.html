@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="description" content="" />
-    <title>PK Financial Inclusion Data Dashboard</title>
+    <title>DATA DRIVEN PAKISTAN</title>
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <!-- jQuery UI CSS -->
@@ -24,96 +24,57 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="#">
                 <span id = "logoText">
-                  <img id="logo" src="img/noun_Pakistan_777656_v1.png" /> Pakistan Financial
-                  Inclusion Data Dashboard - Round 2</a
+                  <img id="logo" src="img/noun_Pakistan_777656_v1.png" />Data Driven Pakistan - test files</a
                 >
         </div>
-    <!-- outs: why do these icons dissapear when I hover over them? -->
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="#Footnote1"><span class="glyphicon glyphicon-info-sign"></span> About This Dashboard</a></li>
-          <li><a href="#Footnote2"><span class="glyphicon glyphicon-user"></span> About Me</a></li>
-        </ul>
+    
+
       </div>
     </nav>
 
     <!-- Bootstrap grid setup -->
-    <div class="container">     
-
-      <div id="selections" class="row">
-        <p id="loading"></p>
-        <div class="col-md-2">
-
-          <select name="indicatorType" id="indicatorType" >
-              <option value="AccAndAgent">Accounts and Agents</option>
-              <option value="gender">Gender Breakdown</option>
-              <option value="MFmap">MF Geo Breakdown</option>
-            </select>
-        </div>
-        
-        <div class="col-md-8">
-          <div id="slider"></div>
-          <label
-            ><span id="dateLabel1"></span><span id="dateLabel2"></span
-          ></label>
-        </div>
-        <div class="col-md-2">
-          <div><button id="reset">Reset</button></div>
-        </div>
-      </div>
-
-      <br>
-      
-      <div class="card row">
-          <h3 id="graphTitle"></h3>
-          <div class="col-md-4" id="chart-area1"></div>
-          <div class="col-md-4" id="chart-area2"></div>
-          <div class="col-md-4"></div>
-          
-        
-          <div class="col-md-4" id="chart-area3"></div>
-          <div class="col-md-4" id="chart-area4"></div>
-          <div class="col-md-4" id="chart-area5"></div>
-      
-        
-          <div class="col-md-4" id="chart-area6" ></div>
-          <div class="col-md-4" id="chart-area7"></div>
-          <div class="col-md-4" id="chart-area8"></div>
-       
-      </div>
-      
-
-      <br />
-
-     
-      
-      <div class="row">
-        <div class="col-md-8">
-          <h4 id="Footnote1">
-            About This Dashboard:
-          </h4>
-          <p>
-            All data sourced from State Bank Of Pakistan's
-            <a
-              href="http://www.sbp.org.pk/publications/acd/branchless.htm"
-              target="_blank"
-              >quarterly branchless banking newsletters</a
-            >.
-          </p>
-          <h4 id="Footnote2">About Me</h4>
-          <p>
-            I am a
-            <a href="https://www.linkedin.com/in/sabahatiqbal/" target="_blank"
-              >global financial inclusion specialist </a
-            >who often has to trawl through obscure government databases to
-            develop country-level analyses. One web site encapsulating all
-            financial inclusion data would have been useful. I decided to create one for Pakistan.</p>
-        </div>
-        <div class="col-md-8">
-          <button onclick="topFunction()" id="myBtn" title="Go to top">
-            Back To Top
-          </button>
-        </div>
-      </div>
+    <div class="container">
+      <table id ="checkTable">
+        <tr>
+          <th>Row Number</th>
+          <th>Date</th>
+          <th>Province</th>
+          <th>District</th>
+          <th>Offices-Fixed</th>
+          <th>Offices-Mobile</th>
+          <th>Active Borrowers</th>
+          <th>Gross Loan Portfolio</th>
+          <th>Active Savers</th>
+          <th>Value of Saving</th>
+          <th>Potential MF Mkt</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Alfreds Futterkiste</td>
+          <td>Maria Anders</td>
+          <td>Germany</td>
+          <td>Alfreds Futterkiste</td>
+          <td>Maria Anders</td>
+          <td>Germany</td>
+          <td>Alfreds Futterkiste</td>
+          <td>Maria Anders</td>
+          <td>Germany</td>
+          <td>Germany</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Centro comercial Moctezuma</td>
+          <td>Francisco Chang</td>
+          <td>Mexico</td>
+          <td>Centro comercial Moctezuma</td>
+          <td>Francisco Chang</td>
+          <td>Mexico</td>
+          <td>Centro comercial Moctezuma</td>
+          <td>Francisco Chang</td>
+          <td>Mexico</td>
+          <td>Centro comercial Moctezuma</td>
+        </tr>
+      </table>
     </div>
 
     <!-- External JS libraries -->
@@ -122,10 +83,11 @@
     <script src="js/jquery-ui.min.js"></script>
     <script src="js/d3.min.js"></script>
     <script src="//d3js.org/topojson.v2.min.js"></script>
-    <script src="node_modules/datamaps/dist/datamaps.world.min.js"></script>
+    <script src="https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js"></script>
+    <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+    <!-- OUTS: delete this if not needed -->
+    <!-- <script src="node_modules/datamaps/dist/datamaps.world.min.js"></script> -->
     <!-- Custom JS -->
-    <script src="js/mainStackArea.js"></script>
-    <script src="js/mainMap.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
